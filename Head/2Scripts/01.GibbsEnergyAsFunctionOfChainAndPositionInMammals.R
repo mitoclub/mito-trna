@@ -12,6 +12,7 @@ data = data[data$temp == 37,]
 nrow(data) # 81157
 
 ### 2 keep only normal tRNA
+table(data$trna)
 length(table(data$trna)) # 23 becaus there is 'local' ???
 data[data$trna == 'local',]
 nrow(data)
@@ -24,6 +25,7 @@ nrow(data)
 data = data[!is.na(data$gibbs),]
 nrow(data)
 summary(data$gibbs)
+table(data$trna) # Phe, Thr, Met and some others are very rare!!!
 
 ### 4 keep only mammals and derive Longlived (!!!!!! not ideal!!!!)
 Mammals = read.table("../../Body/1Raw/GenerationLenghtforMammals.xlsx.txt", sep = '\t', header = TRUE)
@@ -36,6 +38,16 @@ table(Mammals$LongLived)
 nrow(data)
 data = merge(data,Mammals, by = 'species')
 nrow(data)/22 # ~ 432 species
+data = data[order(data$species),]
+table(data$trna) # Phe, Thr, Met and super rare!!!
+
+#### 4.5 check if each mammalian species has 22 tRNA: !!!!!!!!!!!
+SpeciesFreq = data.frame(table(data$species))
+SpeciesFreq = SpeciesFreq[order(-SpeciesFreq$Freq),]
+summary(SpeciesFreq$Freq)
+hist(SpeciesFreq$Freq, breaks = 50)
+Ideal = SpeciesFreq[SpeciesFreq$Freq == 22,]
+nrow(Ideal) # 0 !!!!!! why we don't have species with standart set of tRNAs???
 
 ### 5 read annotation and merge with data
 Annot = read.table("../../Body/2Derived/MammalianTrnaManualAnnotation.txt", sep = '\t', header = TRUE)
@@ -54,11 +66,10 @@ agg = agg[order(agg$MedianGibbs),]
 summary(lm(-MedianGibbs ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll, data = agg))
 # if GeneCodedOnLightChain == 1, it means that tRNA after transcription is identical to heavy chain => G and T rich (due to to common transitions: A>G, C>T)
 # althougth non-significant, TimeBeingSingleStrangedForAll has positive coefficient, which is expected
-
-summary(lm(-MedianGibbs ~ GeneCodedOnLightChain*TimeBeingSingleStrangedForAll, data = agg)) # no interaction
+summary(lm(-MedianGibbs ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll), data = agg)) # no interaction
 
 ### 8 analysis with whole dataset
-summary(lm(-gibbs ~ GeneCodedOnLightChain+TimeBeingSingleStrangedForAll, data = data)) # strong effect of all
+summary(lm(-gibbs ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll), data = data)) # strong effect of all
 
 # to do 1: introduce species factor into the model. glm 
 # to do 2: introduce species as species-specific generation length 
@@ -97,7 +108,12 @@ summary(lm(-gibbs ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll*log2(G
 summary(lm(-scale(gibbs) ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll)*scale(log2(GenerationLength_d)), data = data))
 summary(lm(-scale(gibbs) ~ 0 + scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll)*scale(log2(GenerationLength_d)), data = data))
 
-### 9 continue till all 22 (color by chain)
+### 9 species by species
+VecOfSpecies = unique(data$species); length(VecOfSpecies)
+
+
+
+### 10 drawing
 #boxplot(data[data$trna == 'Pro',]$gibbs, data[data$trna == 'Tyr',]$gibbs, notch = TRUE, outline = FALSE, names = c('Pro','Tyr'))
 
 
