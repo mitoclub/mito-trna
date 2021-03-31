@@ -25,10 +25,14 @@ data = data[!is.na(data$gibbs),]
 nrow(data)
 summary(data$gibbs)
 
-### 4 keep only mammals (!!!!!! not ideal!!!!)
+### 4 keep only mammals and derive Longlived (!!!!!! not ideal!!!!)
 Mammals = read.table("../../Body/1Raw/GenerationLenghtforMammals.xlsx.txt", sep = '\t', header = TRUE)
 Mammals$species = gsub(' ','_',Mammals$Scientific_name)
 Mammals = Mammals[names(Mammals) %in% c('species','GenerationLength_d')]
+ThresholdGenLength = quantile(Mammals$GenerationLength_d,0.25) # this work better than 0.5 or 0.75 => don't know why
+Mammals$LongLived = 1
+for (i in 1:nrow(Mammals))  { if (Mammals$GenerationLength_d[i] <= ThresholdGenLength) {Mammals$LongLived[i] = 0} }
+table(Mammals$LongLived)
 nrow(data)
 data = merge(data,Mammals, by = 'species')
 nrow(data)/22 # ~ 432 species
@@ -60,8 +64,12 @@ summary(lm(-gibbs ~ GeneCodedOnLightChain+TimeBeingSingleStrangedForAll, data = 
 # to do 2: introduce species as species-specific generation length 
 # to do 3: PICs
 
-summary(lm(-gibbs ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll + GenerationLength_d, data = data)) # PIC
-summary(lm(-gibbs ~ (GeneCodedOnLightChain + TimeBeingSingleStrangedForAll)*GenerationLength_d, data = data))
+summary(lm(-gibbs ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll + log2(GenerationLength_d), data = data)) # PIC
+summary(lm(-gibbs ~ (GeneCodedOnLightChain + TimeBeingSingleStrangedForAll)*log2(GenerationLength_d), data = data))
+summary(lm(-gibbs ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll + LongLived, data = data))  #### !!!!!!!!!!
+summary(lm(-gibbs ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll) + scale(LongLived), data = data))  #### !!!!!!!!!!
+
+summary(lm(-gibbs ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll*LongLived, data = data))
 
 #  Coefficients:
 #  Estimate Std. Error t value Pr(>|t|)    
@@ -72,7 +80,7 @@ summary(lm(-gibbs ~ (GeneCodedOnLightChain + TimeBeingSingleStrangedForAll)*Gene
 #  GeneCodedOnLightChain:GenerationLength_d         -4.071e-06  2.687e-05  -0.152  0.87957    
 #  TimeBeingSingleStrangedForAll:GenerationLength_d -1.052e-08  2.176e-09  -4.836 1.35e-06 ***
 
-summary(lm(-gibbs ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll*GenerationLength_d, data = data))
+summary(lm(-gibbs ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll*log2(GenerationLength_d), data = data))
 #  Coefficients:
 #  Estimate Std. Error t value Pr(>|t|)    
 #  (Intercept)                                       1.300e+01  9.755e-02 133.270  < 2e-16 ***
@@ -86,8 +94,8 @@ summary(lm(-gibbs ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll*Genera
 # -gibbs ~ +TimeBeingSingleStrangedForAll # if short lived => GT = 0
 # -gibbs ~ +BIG*TimeBeingSingleStrangedForAll + BIG+GenerationLength_d -SMALL*TimeBeingSingleStrangedForAll*GenerationLength_d # if long lived
 
-summary(lm(-scale(gibbs) ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll)*scale(GenerationLength_d), data = data))
-summary(lm(-scale(gibbs) ~ 0 + scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll)*scale(GenerationLength_d), data = data))
+summary(lm(-scale(gibbs) ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll)*scale(log2(GenerationLength_d)), data = data))
+summary(lm(-scale(gibbs) ~ 0 + scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll)*scale(log2(GenerationLength_d)), data = data))
 
 ### 9 continue till all 22 (color by chain)
 #boxplot(data[data$trna == 'Pro',]$gibbs, data[data$trna == 'Tyr',]$gibbs, notch = TRUE, outline = FALSE, names = c('Pro','Tyr'))
