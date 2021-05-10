@@ -1,4 +1,4 @@
-id species parameter tRna anticodon sequence SecondaryStructure GibbsEnergy
+id species parameter trna anticodon sequence SecondaryStructure GibbsEnergy
 1 mtdbD00000001 Camelus_dromedarius 9838 Phe GAA GUUGAUGUAGCUUAACUUCAAAGCAAGGCGCUGAAAAUGCCUGGAUGGGCACCUAGCCCCAUAAACA (((.(((..((((.......)))).(((((.......)))))....((((.....))))))).))). -15.3
 2 mtdbD00000002 Camelus_dromedarius 9838 Val TAC CAAAACGUAGCUUAAAAAAAGUACCUAAUUUACACUUAGGAGAUUUCAUAGAAAUGAACGUUUUGA ((((((((.((((.....)))).(((((.......))))).....((((....)))))))))))). -12.3
 3 mtdbD00000003 Camelus_dromedarius 9838 Leu2 TAA AUUAGGGUGGCAGAGACCGGUAAUUGCAUAAAACUUAAGAUUUUAGACCCAGAGGUUCAAUUCCUCUCCCUAAUA (((((((.((......))(((.........................))).(((((.......)))))))))))). -12.9
