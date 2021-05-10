@@ -22,10 +22,10 @@ for (i in 1:length(AllFiles))
   GibbsEnergy = gsub("\\(",'',GibbsEnergy); GibbsEnergy = gsub("\\)",'',GibbsEnergy)
   GibbsEnergy = as.numeric(GibbsEnergy)
   
-  OneLine = c(id,species,position,tRna,anticodon,sequence,SecondaryStructure,GibbsEnergy)
+  OneLine = c(id,species,position,trna,anticodon,sequence,SecondaryStructure,GibbsEnergy)
   Final = rbind(Final,OneLine)
 }
-names(Final)=c("id","species","parameter","tRna","anticodon","sequence","SecondaryStructure","GibbsEnergy")
+names(Final)=c("id","species","parameter","trna","anticodon","sequence","SecondaryStructure","GibbsEnergy")
 nrow(Final[is.na(Final$GibbsEnergy),]) # 617
 
 write.table(Final, "../../Body/2Derived/02A.GibbsEnergyAsFunctionOfChainAndPositionInMammals.DeriveMitoTrnaDb.txt", quote = FALSE)
