@@ -70,7 +70,7 @@ library(repr)
 p <- ggplot(data, aes(log10(TimeBeingSingleStrangedForAll), -GibbsEnergy))
 p + geom_boxplot(width = 100, aes(group = trna, fill = GeneCodedOnLightChain))
 
-###неудачная попытка сделать Violin plot
+###Unsuccessful attempt to make a Violin plot
 #install.packages("ggplot2")
 #library(ggplot2)
 #ggplot(light_chain, aes(x = TimeBeingSingleStrangedForAll, y = GibbsEnergy, fill = trna)) + 
