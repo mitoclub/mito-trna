@@ -23,7 +23,7 @@ table(data$trna) # Phe, Thr, Met and super rare!!!
 SpeciesFreq = data.frame(table(data$species))
 SpeciesFreq = SpeciesFreq[order(-SpeciesFreq$Freq),]
 summary(SpeciesFreq$Freq)
-hist(SpeciesFreq$Freq, breaks = 50)
+#hist(SpeciesFreq$Freq, breaks = 50)
 Ideal = SpeciesFreq[SpeciesFreq$Freq == 22,]
 nrow(Ideal) # 0 !!!!!! why we don't have species with standard set of tRNAs???
 
@@ -53,26 +53,27 @@ summary(lm(-GibbsEnergy ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleSt
 # to do 2: introduce species as species-specific generation length 
 # to do 3: PICs
 
-summary(lm(-GibbsEnergy ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll + log2(GenerationLength_d), data = data)) # PIC
-summary(lm(-GibbsEnergy ~ (GeneCodedOnLightChain + TimeBeingSingleStrangedForAll)*log2(GenerationLength_d), data = data))
-summary(lm(-GibbsEnergy ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll + LongLived, data = data))  #### !!!!!!!!!!
-summary(lm(-GibbsEnergy ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll) + scale(LongLived), data = data))  #### !!!!!!!!!!
+#summary(lm(-GibbsEnergy ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll + log2(GenerationLength_d), data = data)) # PIC
+#summary(lm(-GibbsEnergy ~ (GeneCodedOnLightChain + TimeBeingSingleStrangedForAll)*log2(GenerationLength_d), data = data))
+#summary(lm(-GibbsEnergy ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll + LongLived, data = data))  #### !!!!!!!!!!
+#summary(lm(-GibbsEnergy ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll) + scale(LongLived), data = data))  #
+#summary(lm(-GibbsEnergy ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll*LongLived, data = data))
+#summary(lm(-GibbsEnergy ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll*log2(GenerationLength_d), data = data))
+#summary(lm(-scale(GibbsEnergy) ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll)*scale(log2(GenerationLength_d)), data = data))
+#summary(lm(-scale(GibbsEnergy) ~ 0 + scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll)*scale(log2(GenerationLength_d)), data = data))
+summary(lm(-GibbsEnergy ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll), data = data)) # variant in process
 
-summary(lm(-GibbsEnergy ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll*LongLived, data = data))
+###7 drawing
+png(file = "boxplot.png",  width=1000, height=500)
+library(ggplot2)
+library(repr)
+p <- ggplot(data, aes(log10(TimeBeingSingleStrangedForAll), -GibbsEnergy))
+p + geom_boxplot(width = 100, aes(group = trna, fill = GeneCodedOnLightChain))
 
-summary(lm(-GibbsEnergy ~ GeneCodedOnLightChain + TimeBeingSingleStrangedForAll*log2(GenerationLength_d), data = data))
-
-summary(lm(-scale(GibbsEnergy) ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll)*scale(log2(GenerationLength_d)), data = data))
-summary(lm(-scale(GibbsEnergy) ~ 0 + scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll)*scale(log2(GenerationLength_d)), data = data))
-
-### 9 species by species
-#VecOfSpecies = unique(data$species); length(VecOfSpecies)
-
-
-
-### 10 drawing
-#boxplot(data[data$trna == 'Pro',]$gibbs, data[data$trna == 'Tyr',]$gibbs, notch = TRUE, outline = FALSE, names = c('Pro','Tyr'))
-
-
-
+###неудачная попытка сделать Violin plot
+#install.packages("ggplot2")
+#library(ggplot2)
+#ggplot(light_chain, aes(x = TimeBeingSingleStrangedForAll, y = GibbsEnergy, fill = trna)) + 
+#  geom_violin(trim = FALSE) + 
+#  ggtitle("", subtitle = "")
 
