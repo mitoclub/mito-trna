@@ -64,11 +64,13 @@ summary(lm(-GibbsEnergy ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleSt
 summary(lm(-GibbsEnergy ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll), data = data)) # variant in process
 
 ###7 drawing
-png(file = "boxplot.png",  width=1000, height=500)
+png(file = "boxplot.png",  width=3000, height=1000)
 library(ggplot2)
 library(repr)
-p <- ggplot(data, aes(log10(TimeBeingSingleStrangedForAll), -GibbsEnergy))
-p + geom_boxplot(width = 100, aes(group = trna, fill = GeneCodedOnLightChain))+ggtitle("          Cys,    Tyr,     Asp,   Lys,     Phe,    Val,     Gly,    Arg,   His,     Gln,     Ile,     Met,     Trp,     Ala,     Asn,   Glu,    Thr,     Pro")
+ascendingbyTBSS_data <- data[order(data$TimeBeingSingleStrangedForAll),]
+ascendingbyTBSS_data$trna <- factor(ascendingbyTBSS_data$trna, levels = c("Cys", "Tyr", "Asp", "Lys", "Phe", "Val", "Gly","Arg","His","Gln","Ile","Met","Trp","Ala","Asn","Glu","Thr","Pro"))
+p <- ggplot(ascendingbyTBSS_data, aes(TimeBeingSingleStrangedForAll, -GibbsEnergy))
+p + geom_boxplot(aes(group = trna, fill = GeneCodedOnLightChain), width = 3500) + facet_wrap(~ascendingbyTBSS_data$trna, nrow = 1)
 
 ###Unsuccessful attempt to make a Violin plot
 #install.packages("ggplot2")
