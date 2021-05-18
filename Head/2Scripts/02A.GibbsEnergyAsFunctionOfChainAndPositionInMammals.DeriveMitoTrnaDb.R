@@ -14,7 +14,7 @@ for (i in 1:length(AllFiles))
   id = unlist(strsplit(data$V1[1],"\\|"))[1]; id = gsub(">",'',id);
   species = unlist(strsplit(data$V1[1],"\\|"))[2]
   position = unlist(strsplit(data$V1[1],"\\|"))[3]
-  tRna = unlist(strsplit(data$V1[1],"\\|"))[4]
+  trna = unlist(strsplit(data$V1[1],"\\|"))[4]
   anticodon = unlist(strsplit(data$V1[1],"\\|"))[5]
   sequence = data$V1[2]
   SecondaryStructure = unlist(strsplit(data$V1[3]," "))[1]
@@ -27,7 +27,10 @@ for (i in 1:length(AllFiles))
 }
 names(Final)=c("id","species","parameter","trna","anticodon","sequence","SecondaryStructure","GibbsEnergy")
 nrow(Final[is.na(Final$GibbsEnergy),]) # 617
-
+table(Final$trna)
+# Ala  Arg  Asn  Asp  Cys  Gln  Glu  Gly  His  Ile Leu1 Leu2  Lys  Met  Phe  Pro Ser1 Ser2  Thr  Trp  Tyr  Val 
+# 282  282  282  282  282  282  282  282  282  282  282  282  259  282  282  282  282  282  282  282  282  282 
+length(table(Final$trna))
 write.table(Final, "../../Body/2Derived/02A.GibbsEnergyAsFunctionOfChainAndPositionInMammals.DeriveMitoTrnaDb.txt", quote = FALSE)
 
 
