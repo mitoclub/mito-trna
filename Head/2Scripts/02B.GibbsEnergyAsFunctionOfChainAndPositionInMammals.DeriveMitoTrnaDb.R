@@ -37,7 +37,7 @@ nrow(data)
 
 ### 4 average Gibbs Energy for each tRNA
 agg = aggregate(data$GibbsEnergy, by = list(data$trna,data$GeneCodedOnLightChain,data$TimeBeingSingleStrangedForAll), FUN = median)
-names(agg) = c('tRna','GeneCodedOnLightChain','TimeBeingSingleStrangedForAll','MedianGibbs')
+names(agg) = c('trna','GeneCodedOnLightChain','TimeBeingSingleStrangedForAll','MedianGibbs')
 agg = agg[order(agg$MedianGibbs),]
 
 ### 5 analysis with 22 values
@@ -66,9 +66,9 @@ summary(lm(-GibbsEnergy ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleSt
 ###7 drawing
 png(file = "boxplot.png",  width=1000, height=500)
 library(ggplot2)
-library(repr)
+#library(repr)
 p <- ggplot(data, aes(log10(TimeBeingSingleStrangedForAll), -GibbsEnergy))
-p + geom_boxplot(width = 100, aes(group = trna, fill = GeneCodedOnLightChain))+ggtitle("          Cys,    Tyr,     Asp,   Lys,     Phe,    Val,     Gly,    Arg,   His,     Gln,     Ile,     Met,     Trp,     Ala,     Asn,   Glu,    Thr,     Pro")
+p + geom_boxplot(width = 100, aes(group = trna, fill = GeneCodedOnLightChain))+ggtitle("       Cys,  Tyr, SerUCN, Asp,  Lys,  Phe, Val,  Gly, Arg, LeuUUR, His,SerAGY,LeuCUN,Gln,Ile,  Met,   Trp,  Ala,  Asn,   Glu,  Thr,   Pro")
 
 ###Unsuccessful attempt to make a Violin plot
 #install.packages("ggplot2")
@@ -76,4 +76,3 @@ p + geom_boxplot(width = 100, aes(group = trna, fill = GeneCodedOnLightChain))+g
 #ggplot(light_chain, aes(x = TimeBeingSingleStrangedForAll, y = GibbsEnergy, fill = trna)) + 
 #  geom_violin(trim = FALSE) + 
 #  ggtitle("", subtitle = "")
-

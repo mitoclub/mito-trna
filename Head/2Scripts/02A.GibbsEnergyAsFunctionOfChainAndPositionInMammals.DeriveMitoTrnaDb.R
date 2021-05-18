@@ -23,6 +23,10 @@ for (i in 1:length(AllFiles))
   GibbsEnergy = as.numeric(GibbsEnergy)
   
   OneLine = c(id,species,position,trna,anticodon,sequence,SecondaryStructure,GibbsEnergy)
+  Final[Final == "Leu2"] <- "LeuCUN"
+  Final[Final == "Leu1"] <- "LeuUUR"
+  Final[Final == "Ser1"] <- "SerUCN"
+  Final[Final == "Ser2"] <- "SerAGY"
   Final = rbind(Final,OneLine)
 }
 names(Final)=c("id","species","parameter","trna","anticodon","sequence","SecondaryStructure","GibbsEnergy")
@@ -32,6 +36,3 @@ table(Final$trna)
 # 282  282  282  282  282  282  282  282  282  282  282  282  259  282  282  282  282  282  282  282  282  282 
 length(table(Final$trna))
 write.table(Final, "../../Body/2Derived/02A.GibbsEnergyAsFunctionOfChainAndPositionInMammals.DeriveMitoTrnaDb.txt", quote = FALSE)
-
-
-
