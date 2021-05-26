@@ -67,12 +67,14 @@ FinalResults = FinalResults$species # I don't know how, but it just works
 for (i in 1:length(VecOfSpecies))
 { # i = 1
   TEMP = data[data$species == VecOfSpecies[i],] # nrow(TEMP) = 22, 20
-  result = cor.test(TEMP$Gibbs,TEMP$TimeBeingSingleStrangedForAll, method = 'spearman') # => Rho, P
+  result = cor.test(-(TEMP$Gibbs),TEMP$TimeBeingSingleStrangedForAll, method = 'spearman') # => Rho, P
   P =  result[3]
-  Rho = result[4]
-  FinalResults = rbind(FinalResults,c(VecOfSpecies[i],Rho,P))
+  R_value = result[4]
+  FinalResults = rbind(FinalResults,c(VecOfSpecies[i],R_value,P))
 }
 FinalResults = data.frame(FinalResults)
+FinalResults$estimate = as.numeric(FinalResults$estimate)
+hist(FinalResults$estimate)
 print(FinalResults)
 
 #setwd("../../Body/4Figures")
