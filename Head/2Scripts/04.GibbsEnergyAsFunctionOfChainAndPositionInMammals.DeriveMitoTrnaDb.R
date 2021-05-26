@@ -1,7 +1,6 @@
 ###################################
 rm(list=ls(all=TRUE))
 library(ggplot2)
-
 data = read.table("../../Body/2Derived/02A.GibbsEnergyAsFunctionOfChainAndPositionInMammals.DeriveMitoTrnaDb.txt", header = TRUE)
 
 ### 1 keep only mammals and derive Longlived (!!!!!! not ideal!!!!)
@@ -62,13 +61,26 @@ summary(lm(-GibbsEnergy ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleSt
 #summary(lm(-scale(GibbsEnergy) ~ 0 + scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll)*scale(log2(GenerationLength_d)), data = data))
 summary(lm(-GibbsEnergy ~ scale(GeneCodedOnLightChain) + scale(TimeBeingSingleStrangedForAll), data = data)) # variant in process
 
+VecOfSpecies = unique(data$species); length(VecOfSpecies); # ~ 200
+FinalResults = data.frame()
+FinalResults = FinalResults$species # I don't know how, but it just works
+for (i in 1:length(VecOfSpecies))
+{ # i = 1
+  TEMP = data[data$species == VecOfSpecies[i],] # nrow(TEMP) = 22, 20
+  result = cor.test(TEMP$Gibbs,TEMP$TimeBeingSingleStrangedForAll, method = 'spearman') # => Rho, P
+  P =  result[3]
+  Rho = result[4]
+  FinalResults = rbind(FinalResults,c(VecOfSpecies[i],Rho,P))
+}
+FinalResults = data.frame(FinalResults)
+print(FinalResults)
 
-setwd("../../Body/4Figures")
-getwd()
-by_species = split(data,f = data$species)
-length(by_species)
-for (i in 1:length(by_species))
-  filename = (by_species)
-  png(paste(names(by_species)[i], 'png'), width=1000, height=500)
-  p <- ggplot(by_species, aes(log10(TimeBeingSingleStrangedForAll), -GibbsEnergy))
-  p + geom_boxplot(width = 100, aes(group = trna, fill = GeneCodedOnLightChain))+ggtitle("       Cys,  Tyr, SerUCN, Asp,  Lys,  Phe, Val,  Gly, Arg, LeuUUR, His,SerAGY,LeuCUN,Gln,Ile,  Met,   Trp,  Ala,  Asn,   Glu,  Thr,   Pro")
+#setwd("../../Body/4Figures")
+#getwd()
+#by_species = split(data,f = data$species)
+#length(by_species)
+#for (i in 1:length(by_species))
+#  filename = (by_species)
+#  png(paste(names(by_species)[i], 'png'), width=1000, height=500)
+#  p <- ggplot(by_species, aes(log10(TimeBeingSingleStrangedForAll), -GibbsEnergy))
+#  p + geom_boxplot(width = 100, aes(group = trna, fill = GeneCodedOnLightChain))+ggtitle("       Cys,  Tyr, SerUCN, Asp,  Lys,  Phe, Val,  Gly, Arg, LeuUUR, His,SerAGY,LeuCUN,Gln,Ile,  Met,   Trp,  Ala,  Asn,   Glu,  Thr,   Pro")
