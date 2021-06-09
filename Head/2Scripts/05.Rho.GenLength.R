@@ -1,5 +1,7 @@
 ###################################
 rm(list=ls(all=TRUE))
+
+pdf("../../Body/4Figures/05.Rho.GenLength.R.01.pdf")
 library(ggplot2)
 data = read.table("../../Body/2Derived/02A.GibbsEnergyAsFunctionOfChainAndPositionInMammals.DeriveMitoTrnaDb.txt", header = TRUE)
 
@@ -70,7 +72,31 @@ for (i in 1:length(VecOfSpecies))
 }
 
 FinalResults = data.frame(FinalResults)
-FinalResults$estimate = as.numeric(FinalResults$estimate)
-colnames(FinalResults)[1] = "species"
-data = merge(data,FinalResults, by = "species")
-summary(lm(data$estimate ~ data$GenerationLength_d))
+names(FinalResults)[1] = "species"
+FinalResults$estimate = unlist(as.numeric(FinalResults$estimate))
+FinalResults$species = unlist(FinalResults$species)
+FinalResults$p.value = unlist(FinalResults$p.value)
+str(FinalResults)
+
+#### generate GenLength dataset with one line ~ one species and merge with FinalResults
+GenLength = unique(data[names(data) %in% c('species','GenerationLength_d')])
+str(GenLength)
+summary(GenLength$GenerationLength_d)
+
+nrow(FinalResults)
+FinalResults = merge(FinalResults,GenLength, by = 'species')
+nrow(FinalResults)
+
+summary(lm(FinalResults$estimate ~ log2(FinalResults$GenerationLength_d)))
+cor.test(FinalResults$estimate,FinalResults$GenerationLength_d, method = 'spearman')
+plot(FinalResults$estimate,log2(FinalResults$GenerationLength_d))
+FinalResults = FinalResults[order(FinalResults$estimate),]
+par(mfrow=c(2,1))
+hist(FinalResults$estimate, breaks = 50, xlim = c(-0.3,0.5))
+hist(FinalResults[FinalResults$p.value < 0.10,]$estimate, breaks = 50, xlim = c(-0.3,0.5))
+
+par(mfrow=c(1,1))
+boxplot(FinalResults[FinalResults$p.value < 0.10,]$GenerationLength_d,FinalResults[FinalResults$p.value >= 0.10,]$GenerationLength_d, notch = TRUE, ylab = 'Generation length (days)', names = c('SuggestivePositiveRho','NoCorrelation'))
+wilcox.test(FinalResults[FinalResults$p.value < 0.10,]$GenerationLength_d,FinalResults[FinalResults$p.value >= 0.10,]$GenerationLength_d) # p-value = 0.02073
+
+dev.off()
