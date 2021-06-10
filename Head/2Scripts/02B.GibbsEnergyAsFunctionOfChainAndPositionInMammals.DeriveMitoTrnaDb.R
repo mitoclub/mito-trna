@@ -34,6 +34,7 @@ Annot = Annot[colnames(Annot) %in% c('trna','GeneCodedOnLightChain','TimeBeingSi
 nrow(data)
 data = merge(data,Annot, by = 'trna')
 nrow(data)
+write.table(data, "../../Body/2Derived/TRNASpeciesandGibbs.txt",sep="\t", quote = FALSE, row.names=FALSE, col.names=TRUE)
 
 ### 4 average Gibbs Energy for each tRNA
 agg = aggregate(data$GibbsEnergy, by = list(data$trna,data$GeneCodedOnLightChain,data$TimeBeingSingleStrangedForAll), FUN = median)
